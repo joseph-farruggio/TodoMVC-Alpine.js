@@ -19,7 +19,7 @@
 		<header class="header text-center w-full max-w-xl mx-auto">
 			<h1 class="text-cyan-300 text-5xl text-center py-4">todos</h1>
 			<div class="relative">
-				<input class="new-todo text-xl text-cyan-300 placeholder-cyan-300 bg-slate-800 border-none outline-none w-full rounded-2xl pl-20 pr-4 py-4 " x-model="newTodo"
+				<input x-ref="input" class="new-todo text-xl text-cyan-300 placeholder-cyan-300 bg-slate-800 border-none outline-none w-full rounded-2xl pl-20 pr-4 py-4 " x-model="newTodo"
 					@keyup.enter="createTodo()"
 					placeholder="What needs to be done?"
 					autofocus>
@@ -177,7 +177,7 @@
 				},
 
 				init() {
-					// this.newTodo.focus()
+					this.$refs.input.focus()
 				}
 			}
 		}
