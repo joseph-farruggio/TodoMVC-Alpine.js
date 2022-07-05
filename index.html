@@ -64,29 +64,31 @@
 			<div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-slate-900 h-32 pointer-events-none"></div>
 		</section>
 		
-		<footer class="footer rounded-2xl border-t border-slate-900 text-cyan-300 px-4 py-4 max-w-xl mx-auto bg-slate-800/30 flex items-center justify-between" x-show="todos.length">
-			<span class="todo-count text-cyan-500">
+		<footer class="footer rounded-2xl border-t border-slate-900 text-cyan-300 px-4 py-4 max-w-xl mx-auto bg-slate-800/30 md:flex items-center justify-between" x-show="todos.length">
+			<span class="todo-count text-cyan-500 block text-center">
 				<strong x-text="activeTodos.length || 0"></strong>
 				<span x-text="todos.length == 1 ? 'item left' : 'items left'"></span>
 			</span>
 			
-			<ul class="filters flex items-center ml-auto space-x-2">
-				<li>
-					<a href="#/" class="px-2 md:px-4 py-1 md:py-2 hover:bg-slate-800/40" :class="{'border border-cyan-600': filterBy == 'all'}" @click.prevent="filterBy = 'all'">All</a>
-				</li>
-				<li>
-					<button :disabled="!activeTodos.length" class="px-2 md:px-4 py-1 md:py-2"
-						:class="{'border border-cyan-600': filterBy == 'active','hover:bg-slate-800/40': activeTodos.length, 'text-cyan-700': !activeTodos.length}"
-						@click.prevent="filterBy = 'active'">Active</button>
-				</li>
-				<li>
-					<button :disabled="!completedTodos.length" class="px-2 md:px-4 py-1 md:py-2"
-						:class="{'border border-cyan-600': filterBy == 'complete','hover:bg-slate-800/40':completedTodos.length, 'text-cyan-700': !completedTodos.length}"
-						@click.prevent="filterBy = 'complete'">Completed</button>
-				</li>
-			</ul>
-			
-			<button @click="clearCompleted" :disabled="!completedTodos.length" :class="{'hover:bg-slate-800/40':completedTodos.length, 'text-cyan-700': !completedTodos.length}" class="clear-completed ml-4 px-2 md:px-4 py-1 md:py-2 hover:bg-slate-800/40">Clear completed</button>
+			<div class="flex flex-col md:flex-row items-center justify-between mt-6 md:mt-0">
+				<ul class="filters flex items-center md:ml-auto space-x-2">
+					<li>
+						<a href="#/" class="px-4 py-2 hover:bg-slate-800/40" :class="{'border border-cyan-600': filterBy == 'all'}" @click.prevent="filterBy = 'all'">All</a>
+					</li>
+					<li>
+						<button :disabled="!activeTodos.length" class="px-4 py-1 md:py-2"
+							:class="{'border border-cyan-600': filterBy == 'active','hover:bg-slate-800/40': activeTodos.length, 'text-cyan-700': !activeTodos.length}"
+							@click.prevent="filterBy = 'active'">Active</button>
+					</li>
+					<li>
+						<button :disabled="!completedTodos.length" class="px-4 py-1 md:py-2"
+							:class="{'border border-cyan-600': filterBy == 'complete','hover:bg-slate-800/40':completedTodos.length, 'text-cyan-700': !completedTodos.length}"
+							@click.prevent="filterBy = 'complete'">Completed</button>
+					</li>
+				</ul>
+				
+				<button @click="clearCompleted" :disabled="!completedTodos.length" :class="{'hover:bg-slate-800/40':completedTodos.length, 'text-cyan-700': !completedTodos.length}" class="clear-completed mt-6 md:mt-0 md:ml-4 px-4 py-1 md:py-2 hover:bg-slate-800/40">Clear completed</button>
+			</div>
 		</footer>
 	</section>
 	<footer class="info max-w-xl mx-auto text-cyan-600 text-center mt-4 space-y-2">
