@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Template • TodoMVC</title>
+	<!-- <link rel="stylesheet" href="node_modules/todomvc-common/base.css">
+	<link rel="stylesheet" href="node_modules/todomvc-app-css/index.css"> -->
+	<!-- CSS overrides - remove if you don't need it -->
+	<script src="https://cdn.tailwindcss.com"></script>
+	<link rel="stylesheet" href="css/app.css">
+	<script defer src="https://unpkg.com/@alpinejs/persist@3.x.x/dist/cdn.min.js"></script>
+	<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+
+<body x-data="app" class="bg-slate-900 px-4">
+	<section class="todoapp mt-2">
+		<header class="header text-center w-full max-w-xl mx-auto">
+			<h1 class="text-cyan-300 text-5xl text-center py-4">todos</h1>
+			<div class="relative">
+				<input class="new-todo text-xl text-cyan-300 placeholder-cyan-300 bg-slate-800 border-none outline-none w-full rounded-2xl pl-20 pr-4 py-4 " x-model="newTodo"
+					@keyup.enter="createTodo()"
+					placeholder="What needs to be done?"
+					autofocus>
+				<button :class="toggle || 'opacity-50'" @click="toggleAll" class="bg-slate-900 text-cyan-300 hover:bg-slate-800/40/60 p-1 rounded-xl absolute top-0 left-0 mt-3 ml-4 ">
+					<svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+						stroke-width="2">
+						<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+					</svg>
+				</button>
+			</div>
+		</header>
+
+		
+		<section class="main relative text-cyan-300 max-w-xl mx-auto mt-8 h-[400px]">
+			<ul x-show="todos.length" class="todo-list h-[400px] bg-slate-800  pb-20 overflow-y-scroll rounded-2xl">
+				<template x-for="todo in filteredTodos" :key="todo.id">
+					<li class="p-4 border-t border-slate-900/40" :class="{'completed': todo.completed, 'editing border border-cyan-300': todo.editing}">
+						<div class="view text-white flex items-center justify-between" x-show="!todo.editing">
+							<div class="flex items-center">
+								<button @click="todo.completed = !todo.completed" class="bg-slate-900/60 text-cyan-300 hover:bg-slate-900 p-1 rounded-xl">
+									<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" :class="todo.completed || 'opacity-0'" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+										stroke-width="2">
+										<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+									</svg>
+								</button>
+								<label @dblclick="editTodo(todo)" class="ml-4 text-xl" x-text="todo.title"></label>
+							</div>
+							<button @click="deleteTodo(todo)" class="destroy text-slate-600 hover:text-slate-400">
+								<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+									<path fill-rule="evenodd"
+										d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+										clip-rule="evenodd" />
+								</svg>
+							</button>
+						</div>
+						<input class="edit text-xl bg-transparent text-white w-full outline-none" :class="todo.editing || 'hidden'" x-model="todo.title" @click.away="saveEdit(todo)"
+							@keyup.enter="saveEdit(todo)"
+							@keyup.esc="cancelEdit(todo)">
+					</li>
+				</template>
+			</ul>
+			<div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-slate-900 h-32 pointer-events-none"></div>
+		</section>
+		
+		<footer class="footer rounded-2xl border-t border-slate-900 text-cyan-300 px-4 py-4 max-w-xl mx-auto bg-slate-800/30 flex items-center justify-between" x-show="todos.length">
+			<span class="todo-count text-cyan-500">
+				<strong x-text="activeTodos.length || 0"></strong>
+				<span x-text="todos.length == 1 ? 'item left' : 'items left'"></span>
+			</span>
+			
+			<ul class="filters flex items-center ml-auto space-x-2">
+				<li>
+					<a href="#/" class="px-2 md:px-4 py-1 md:py-2 hover:bg-slate-800/40" :class="{'border border-cyan-600': filterBy == 'all'}" @click.prevent="filterBy = 'all'">All</a>
+				</li>
+				<li>
+					<button :disabled="!activeTodos.length" class="px-2 md:px-4 py-1 md:py-2"
+						:class="{'border border-cyan-600': filterBy == 'active','hover:bg-slate-800/40': activeTodos.length, 'text-cyan-700': !activeTodos.length}"
+						@click.prevent="filterBy = 'active'">Active</button>
+				</li>
+				<li>
+					<button :disabled="!completedTodos.length" class="px-2 md:px-4 py-1 md:py-2"
+						:class="{'border border-cyan-600': filterBy == 'complete','hover:bg-slate-800/40':completedTodos.length, 'text-cyan-700': !completedTodos.length}"
+						@click.prevent="filterBy = 'complete'">Completed</button>
+				</li>
+			</ul>
+			
+			<button @click="clearCompleted" :disabled="!completedTodos.length" :class="{'hover:bg-slate-800/40':completedTodos.length, 'text-cyan-700': !completedTodos.length}" class="clear-completed ml-4 px-2 md:px-4 py-1 md:py-2 hover:bg-slate-800/40">Clear completed</button>
+		</footer>
+	</section>
+	<footer class="info max-w-xl mx-auto text-cyan-600 text-center mt-4 space-y-2">
+		<p>Double-click to edit a todo</p>
+		<!-- Change this out with your name and url ↓ -->
+		<p>Created by <a href="https:joeyfarruggio.com" class="underline text-cyan-300">Joey Farruggio</a></p>
+		<p>Part of <a href="http://todomvc.com" class="underline text-cyan-300">TodoMVC</a></p>
+	</footer>
+	<!-- Scripts here. Don't remove ↓ -->
+	<script src="node_modules/todomvc-common/base.js"></script>
+	<script src="js/app.js"></script>
+
+	<script>
+		function app() {
+			return {
+				todos: this.$persist([
+				]),
+				filterBy: 'all',
+				filteredTodos: null,
+				newTodo: '',
+				editedTodo: null,
+				toggle: false,
+
+				get completedTodos() {
+					return this.todos.filter(todo => todo.completed);
+				},
+
+				get activeTodos() {
+					return this.todos.filter(todo => !todo.completed);
+				},
+
+				get filteredTodos() {
+					return {
+						all: this.todos,
+						active: this.activeTodos,
+						complete: this.completedTodos
+					}[this.filterBy]
+				},
+
+				deleteTodo(todo) {
+					let position = this.todos.indexOf(todo);
+					this.todos.splice(position, 1);
+				},
+
+				createTodo() {
+					if (!this.newTodo) {
+						return;
+					}
+					this.todos.push({
+						id: Date.now(),
+						title: this.newTodo,
+						completed: false
+					});
+					this.newTodo = "";
+				},
+
+				clearCompleted() {
+					this.todos = this.activeTodos;
+					this.filterBy = 'all';
+				},
+
+				editTodo(todo) {
+					todo.editing = true;
+					todo.cachedTitle = todo.title;
+					this.editedTodo = todo;
+				},
+
+				saveEdit(todo) {
+					if (todo.title.trim() === '') {
+						this.deleteTodo(todo);
+					}
+					todo.editing = false;
+					this.editedTodo = null;
+				},
+
+				cancelEdit(todo) {
+					todo.editing = false;
+					todo.title = todo.cachedTitle;
+					delete todo.cachedTitle;
+					this.editedTodo = null;
+				},
+
+				toggleAll() {
+					this.toggle = !this.toggle;
+					this.todos.forEach(todo => todo.completed = this.toggle);
+				},
+
+				init() {
+					// this.newTodo.focus()
+				}
+			}
+		}
+	</script>
+</body>
+
+</html>
