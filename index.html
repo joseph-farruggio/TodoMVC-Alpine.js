@@ -32,11 +32,11 @@
 			</div>
 		</header>
 
-		
+
 		<section class="main relative text-cyan-300 max-w-xl mx-auto mt-8 h-[400px]">
 			<ul x-show="todos.length" class="todo-list h-[400px] bg-slate-800  pb-20 overflow-y-scroll rounded-2xl">
 				<template x-for="todo in filteredTodos" :key="todo.id">
-					<li class="p-4 border-t border-slate-900/40" :class="{'completed': todo.completed, 'editing border border-cyan-300': todo.editing}">
+					<li class="p-4 border-t border-slate-900/40 first-of-type:rounded-t-2xl" :class="{'completed': todo.completed, 'editing border border-cyan-300': todo.editing}">
 						<div class="view text-white flex items-center justify-between" x-show="!todo.editing">
 							<div class="flex items-center">
 								<button @click="todo.completed = !todo.completed" class="bg-slate-900/60 text-cyan-300 hover:bg-slate-900 p-1 rounded-xl">
@@ -63,13 +63,13 @@
 			</ul>
 			<div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-slate-900 h-32 pointer-events-none"></div>
 		</section>
-		
+
 		<footer class="footer rounded-2xl border-t border-slate-900 text-cyan-300 px-4 py-4 max-w-xl mx-auto bg-slate-800/30 md:flex items-center justify-between" x-show="todos.length">
 			<span class="todo-count text-cyan-500 block text-center">
 				<strong x-text="activeTodos.length || 0"></strong>
 				<span x-text="todos.length == 1 ? 'item left' : 'items left'"></span>
 			</span>
-			
+
 			<div class="flex flex-col md:flex-row items-center justify-between mt-6 md:mt-0">
 				<ul class="filters flex items-center md:ml-auto space-x-2">
 					<li>
@@ -86,8 +86,9 @@
 							@click.prevent="filterBy = 'complete'">Completed</button>
 					</li>
 				</ul>
-				
-				<button @click="clearCompleted" :disabled="!completedTodos.length" :class="{'hover:bg-slate-800/40':completedTodos.length, 'text-cyan-700': !completedTodos.length}" class="clear-completed mt-6 md:mt-0 md:ml-4 px-4 py-1 md:py-2 hover:bg-slate-800/40">Clear completed</button>
+
+				<button @click="clearCompleted" :disabled="!completedTodos.length" :class="{'hover:bg-slate-800/40':completedTodos.length, 'text-cyan-700': !completedTodos.length}"
+					class="clear-completed mt-6 md:mt-0 md:ml-4 px-4 py-1 md:py-2 hover:bg-slate-800/40">Clear completed</button>
 			</div>
 		</footer>
 	</section>
